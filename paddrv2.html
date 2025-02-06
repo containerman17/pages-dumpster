@@ -17,6 +17,12 @@
             return utils.format(chain, hrp, address);
         }
 
+        await window.ethereum.request({
+            method: 'eth_requestAccounts',
+            params: [],
+            id: 2,
+        })
+
         const pubkeys = await window.ethereum.request({
             method: 'avalanche_getAccountPubKey',
             params: [],
