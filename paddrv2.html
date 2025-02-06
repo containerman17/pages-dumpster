@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <pre id="output"></pre>
+
+    <script type="module">
+        import { utils, secp256k1, networkIDs } from "https://esm.sh/@avalabs/avalanchejs@4.1.2-alpha.4";
+        import { hexToBytes } from 'https://esm.sh/@noble/hashes/utils';
+        import { ProjectivePoint } from 'https://esm.sh/@noble/secp256k1';
+        import { Buffer } from 'https://esm.sh/buffer@6.0.3';
+
+        function getXPAddressFromPublicKey(publicKeyHex, chain, hrp) {
+            const publicKey = hexToBytes(publicKeyHex)
+            const compressed = ProjectivePoint.fromHex(publicKeyHex).toHex(true)
+            const address = secp256k1.publicKeyBytesToAddress(hexToBytes(compressed));
+            return utils.format(chain, hrp, address);
+        }
+
+        const pubkeys = await window.ethereum.request({
+            method: 'avalanche_getAccountPubKey',
+            params: [],
+            id: 2,
+        })
+        console.log(pubkeys)
+        const pubComp = Buffer.from(pubkeys.xp, 'hex');
+        const address = secp256k1.publicKeyBytesToAddress(pubComp);
+        const FUJI = 5
+        console.log(utils.format('P', networkIDs.getHRP(FUJI), address));
+    </script>
+</body>
+
+</html>
